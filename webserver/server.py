@@ -182,10 +182,6 @@ def index():
 # notice that the functio name is another() rather than index()
 # the functions for each app.route needs to have different names
 #
-@app.route('/customer')
-def customer():
-  return render_template("customer.html")
-
 @app.route('/another')
 def another():
   return render_template("anotherfile.html")
