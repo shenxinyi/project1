@@ -7,15 +7,9 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <style>
-      #map {
-        height: 500px;
-        weight: 400px;
-      }
-    </style>
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Welcome Columbia Second Hand</title>
+    <title>New Easy Park</title>
 
     <!-- Bootstrap core CSS -->
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -40,18 +34,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Columbia Market :)</a>
+          <a class="navbar-brand" href="#">Easy Park :)</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="active">
-              <a href="#">Home</a>
-            </li>
-            <li>
-              <a href="/newuser">New user</a>
-            </li>
-            <li>
-              <a href="/returnuser">Login</a>
+              <a href="/">Home</a>
             </li>
         </div><!--/.navbar-collapse -->
       </div>
@@ -59,24 +47,38 @@
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
+      
       <div class="container">
         <h1>Hello, everyone!</h1>
-        <p>Welcome to this sharing website. If you are new here, please press the button "New user" to register as a customer, or press the button "New holder" to register as a holder. To login press button "login". </p>
+        <p>Welcome to this sharing website. If you are new here, please press the button "New user" to register as a customer, or press the button "New holder" to register as a holder. To login press button "login”.</p>
       </div>
     </div>
 
     <div class="container">
       <!-- Example row of columns -->
+    <div class="container">
+      <!-- Example row of columns -->
       <div class="row">
+        <div class="col-md-4">
+          <form class="navbar-form navbar-right" name="myform" method="post">
+            <div class="form-group">
+              <input type="text" name="username" placeholder="Username" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" name="password" placeholder="Password" class="form-control">
+            </div>
+            <div class="form-group">
+            <button type="submit" class="btn btn-success">login</button>
+          </div>
+          </form>
+        </div>
+      </div>
 
-<p><a href="/another">Go to the other page</a></p>
-</div>
       <hr>
 
       <footer>
         <p>IOT GROUP8 2015</p>
       </footer>
     </div> <!-- /container -->
-            
   </body>
 </html>
