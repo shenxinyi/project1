@@ -18,7 +18,8 @@ Read about it online.
 import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response,session
+
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -128,6 +129,7 @@ def index():
 
   # DEBUG: this is debugging code to see what request looks like
   print request.args
+  # print session['username']
 
 
   #
@@ -172,7 +174,7 @@ def index():
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
-  return render_template("index.html", **context)
+  return render_template("index.html", )
 
 #
 # This is an example of a different path.  You can see it at
@@ -190,15 +192,25 @@ def newuser():
 def add():
   username=request.form['name']
   password=request.form['password']
+  email=request.form['email']
   cursor = g.conn.execute("SELECT username FROM users")
   i=0
   for result in cursor:
-    if username==result:
+    print username
+    print result
+    if username==result['username']:
       i=1
-      return redirect("/newuser")
+      break
+  cursor.close()
+  print username
+  print email
+
   if i==0:
-    g.conn.execute("INSERT INTO users VALUES(%s,%s)",username,password)
-    return redirect("/")
+    # session['username']=request.form['name']
+    g.conn.execute("INSERT INTO users (username,password,email) VALUES ('%s','%s','%s');" %(username,password,email))
+    return redirect('/')
+  else:
+    return redirect('/newuser')
 
 @app.route('/another')
 def another():
@@ -206,7 +218,25 @@ def another():
 @app.route('/returnuser')
 def returnuser():
   return render_template("returnuser.html")
+@app.route('/login', methods=['POST'])
+def login():
+  username=request.form['username']
+  password=request.form['password']
+  print username
+  cursor = g.conn.execute("SELECT username,password FROM users")
+  i=0
+  for result in cursor:
+    print password
+    if username==result['username'] and password==result['password']:
+      i=1
+      break
+  cursor.close()
+  if i==1:
+    return redirect('/')
+  else:
+    return redirect('/returnuser')
 
+  # cursor.close()
 
 # Example of adding new data to the database
 # @app.route('/add', methods=['POST'])
@@ -216,10 +246,10 @@ def returnuser():
 #   return redirect('/')
 
 
-@app.route('/login')
-def login():
-    abort(401)
-    this_is_never_executed()
+# @app.route('/login')
+# def login():
+#     abort(401)
+#     this_is_never_executed()
 
 
 if __name__ == "__main__":
