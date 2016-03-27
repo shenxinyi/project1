@@ -18,13 +18,12 @@ Read about it online.
 import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
-from flask import session
+from flask import Flask, request, render_template, g, redirect, Response,session
 
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
-app.secret_key = os.urandom(24)
+
 
 #
 # The following uses the sqlite3 database test.db -- you can use this for debugging purposes
@@ -131,14 +130,16 @@ def index():
   # DEBUG: this is debugging code to see what request looks like
   print request.args
   # print session['username']
-  msg = 'Hello, everyone!'
-  if 'user' in session:
-    msg = 'Welcome back, %s.' % session['user']
-  context = dict(data = msg)
+
 
   #
   # example of a database query
   #
+  cursor = g.conn.execute("SELECT name FROM test")
+  names = []
+  for result in cursor:
+    names.append(result['name'])  # can also be accessed using result[0]
+  cursor.close()
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -166,14 +167,14 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  
+  context = dict(data = names)
 
 
   #
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
-  return render_template("index.html", **context)
+  return render_template("index.html", )
 
 #
 # This is an example of a different path.  You can see it at
@@ -192,31 +193,22 @@ def add():
   username=request.form['name']
   password=request.form['password']
   email=request.form['email']
-  role = request.form.getlist('role')
-  
   cursor = g.conn.execute("SELECT username FROM users")
   i=0
   for result in cursor:
+    print username
+    print result
     if username==result['username']:
       i=1
       break
   cursor.close()
-
+  print username
+  print email
 
   if i==0:
     # session['username']=request.form['name']
     g.conn.execute("INSERT INTO users (username,password,email) VALUES ('%s','%s','%s');" %(username,password,email))
-    cursor = g.conn.execute("SELECT uid FROM users WHERE username = '%s';" % username)
-    uid = []
-    for result in cursor:
-      uid.append(result[0])
-    cursor.close()
-    if 'buyer' in role:
-      g.conn.execute("INSERT INTO buyer (uid) VALUES ('%s');" % uid[0])
-    if 'seller' in role:
-      g.conn.execute("INSERT INTO seller (uid) VALUES ('%s');" % uid[0])      
     return redirect('/')
-  
   else:
     return redirect('/newuser')
 
@@ -240,8 +232,6 @@ def login():
       break
   cursor.close()
   if i==1:
-    session['user'] = username
-    print session ['user']
     return redirect('/')
   else:
     return redirect('/returnuser')
