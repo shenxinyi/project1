@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>New Easy Park</title>
+    <title>Welcome Columbia Second Hand</title>
 
     <!-- Bootstrap core CSS -->
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -34,12 +34,15 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Columbia Market :)</a>
+          <a class="navbar-brand" href="#">Easy Park :)</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="active">
               <a href="/">Home</a>
+            </li>
+            <li>
+              <a href="/gotocart">Go to cart</a>
             </li>
         </div><!--/.navbar-collapse -->
       </div>
@@ -55,25 +58,23 @@
     </div>
 
     <div class="container">
+      <h1>All Products</h1>
+      <div>
+        {%for n in data%}
+          <div>{{n}}</div>
+        {% endfor %}
+      </div>
       <!-- Example row of columns -->
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
         <div class="col-md-4">
-          <form class="navbar-form navbar-right" name="myform" method="POST" action="/add">
+          <form class="navbar-form navbar-right" name="myform" method="POST" action="/addtocart">
             <div class="form-group">
-              <input type="text" name="name" placeholder="Username" class="form-control">
+              <input type="number" name="pid" placeholder="Product id you want" class="form-control">
             </div>
             <div class="form-group">
-              <input type="password" name="password" placeholder="Password" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="email" name="email" placeholder="Email" class="form-control">
-            </div><br>
-            <input type="checkbox" name="role" value="buyer"> Buyer<br>
-            <input type="checkbox" name="role" value="seller"> Seller<br>
-            <div class="form-group">
-            <button type="submit" class="btn btn-success">Register</button>
+            <button type="submit" class="btn btn-success">Add to cart</button>
           </div>
           </form>
         </div>
@@ -82,7 +83,7 @@
       <hr>
 
       <footer>
-        <p>IOT GROUP8 2015</p>
+        <p>Database 2016 Spring</p>
       </footer>
     </div> <!-- /container -->
   </body>

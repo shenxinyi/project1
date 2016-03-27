@@ -45,13 +45,22 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="active">
-              <a href="#">Home</a>
+              <a href="/">Home</a>
             </li>
             <li>
               <a href="/newuser">New user</a>
             </li>
             <li>
-              <a href="/returnuser">Login</a>
+              <a href="/returnuser">{{data2}}</a>
+            </li>
+            <li>
+              <a href="/post">Post item</a>
+            </li>
+            <li>
+              <a href="/seeproduct">Shop</a>
+            </li>
+            <li>
+              <a href="/myproducts">My products</a>
             </li>
         </div><!--/.navbar-collapse -->
       </div>
@@ -60,7 +69,7 @@
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
-        <h1>Hello, everyone!</h1>
+        <h1>{{data}}</h1>
         <p>Welcome to this sharing website. If you are new here, please press the button "New user" to register as a customer, or press the button "New holder" to register as a holder. To login press button "login". </p>
       </div>
     </div>
@@ -68,6 +77,15 @@
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
+        <div class="col-md-4">
+          <form class="navbar-form navbar-right" name="myform" method="POST" action="/post">
+            
+            <div class="form-group">
+            <button type="submit" class="btn btn-success">Post an item</button><button type="submit" class="btn btn-success">Go shopping</button>
+          </div>
+          </form>
+        </div>
+      </div>
 
 <p><a href="/another">Go to the other page</a></p>
 </div>
