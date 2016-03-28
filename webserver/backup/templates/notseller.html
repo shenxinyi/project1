@@ -7,6 +7,12 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
+    <style>
+      #map {
+        height: 500px;
+        weight: 400px;
+      }
+    </style>
     <link rel="icon" href="../../favicon.ico">
 
     <title>Welcome Columbia Second Hand</title>
@@ -41,57 +47,34 @@
             <li class="active">
               <a href="/">Home</a>
             </li>
-
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
-      
       <div class="container">
-        <h1>{{data2}}</h1>
-        <p>Welcome to this sharing website. If you are new here, please press the button "New user" to register as a customer, or press the button "New holder" to register as a holder. To login press button "login".</p>
+        
+        <p>Sorry, this page is limited to users registered as sellers.</p>
       </div>
     </div>
 
     <div class="container">
-      <h1>My Products</h1>
-      <div>
-        {%for n in data%}
-          <div>{{n}}</div>
-        {% endfor %}
-      </div>
-      <h1>My Feedback</h1>
-      <div>
-        {%for n in data1%}
-          <div>{{n}}</div>
-        {% endfor %}
-      </div>
-      <!-- Example row of columns -->
-    <div class="container">
       <!-- Example row of columns -->
       <div class="row">
         <div class="col-md-4">
-          <form class="navbar-form navbar-right" name="myform" method="POST" action="/feedback">
-            <div class="form-group">
-              <input type="number" name="pid" placeholder="Product id" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="number" name="accuracy" placeholder="Accuracy(out of 10)" class="form-control">
-            </div>
-            <div class="form-group">
-            <button type="submit" class="btn btn-success">Give feedback</button>
-          </div>
-          </form>
+          
         </div>
       </div>
 
+
+</div>
       <hr>
 
       <footer>
         <p>Database 2016 Spring</p>
       </footer>
     </div> <!-- /container -->
+            
   </body>
 </html>

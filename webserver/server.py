@@ -210,8 +210,8 @@ def add():
 
   if i==0:
     # session['username']=request.form['name']
-    g.conn.execute("INSERT INTO users (username,password,email) VALUES ('%s','%s','%s');" %(username,password,email))
-    cursor = g.conn.execute("SELECT uid FROM users WHERE username = '%s';" % username)
+    g.conn.execute("INSERT INTO users (username,password,email) VALUES (%s,%s,%s);",(username,password,email))
+    cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s;",(username))
     uid = []
     for result in cursor:
       uid.append(result[0])
@@ -233,13 +233,12 @@ def add():
 def returnuser():
   g.conn.execute("delete from shopcart;")
   if 'user' in session:
-    
     session.pop('user', None)
     if 'bid' in session:
-      g.conn.execute("delete from shopcart where bid='%s';" %session['bid'])
-      session.pop('buyer', None)
+      g.conn.execute("delete from shopcart where bid=%s;",(session['bid']))
+      session.pop('bid', None)
     if 'sid' in session:
-      session.pop('seller', None)
+      session.pop('sid', None)
     return redirect('/')
   else:
     return render_template("returnuser.html")
@@ -277,7 +276,10 @@ def login():
 @app.route('/post')
 def post():
   if 'sid' in session:
-        return render_template("post.html")
+    if 'user' in session:
+      msg = 'Welcome back, %s.' % session['user']
+      context = dict(data = msg)
+    return render_template("post.html", **context)
   return render_template("notseller.html")
 
 
@@ -286,7 +288,7 @@ def addproduct():
   pname=request.form['productname']
   price=request.form['price']
   condition=request.form['condition']
-  cursor=g.conn.execute("SELECT s.sid FROM users u,seller s WHERE u.username='%s' AND u.uid=s.uid;" %session['user'])
+  cursor=g.conn.execute("SELECT s.sid FROM users u,seller s WHERE u.username=%s AND u.uid=s.uid;", (session['user']))
   # sidresult=g.conn.execute("SELECT s.sid FROM users u,sellers s WHERE u.username='%s' AND u.uid=s.uid;", % session['user'])
   sid=[]
   for result in cursor:
@@ -294,11 +296,12 @@ def addproduct():
   cursor.close()
   print sid[0]
   # g.conn.execute("INSERT INTO seller (uid) VALUES ('%s');" % uid[0])
-  g.conn.execute("INSERT INTO product_sells (sid,pname,price,condition) VALUES ('%s','%s','%s','%s');" %(sid[0],pname,price,condition))
+  g.conn.execute("INSERT INTO product_sells (sid,pname,price,condition) VALUES (%s,%s,%s,%s);", (sid[0],pname,price,condition))
   return redirect('/')
 
 @app.route('/myitem')
 def myitem():
+  msg = 'Welcome back, %s.' % session['user']
   cursor=g.conn.execute("SELECT * FROM product_sells WHERE sid='%s';" %session['sid'])
   product=[]
   for result in cursor:
@@ -313,13 +316,14 @@ def myitem():
     one.append(str(result['condition']))
     product.append(one)
   cursor.close()
-  context=dict(data=product)
+  context=dict(data=product,data2=msg)
   return render_template("myitem.html", **context)
 
 @app.route('/seeproduct')
 def seeproduct():
   if 'bid' not in session:
     return render_template("notbuyer.html")
+  msg = 'Welcome back, %s.' % session['user']
   cursor = g.conn.execute("SELECT * FROM product_sells where condition !='sold';")
   product = []
   for result in cursor:
@@ -336,11 +340,12 @@ def seeproduct():
     one.append(str(result['condition']))
     product.append(one)
   cursor.close()
-  context = dict(data=product)
+  context = dict(data=product,data2=msg)
   return render_template("seeproduct.html", **context)
 
 @app.route('/seeeva')
 def seeeva():
+  msg = 'Welcome back, %s.' % session['user']
   cursor = g.conn.execute("SELECT p.sid, avg(accuracy) AS grade FROM feedback_given f, product_sells p WHERE p.pid=f.pid  GROUP BY p.sid;")
   evaluation=[]
   for result in cursor:
@@ -349,21 +354,21 @@ def seeeva():
     one.append("seller id: ")
     one.append(result['sid'])
     one.append("seller grade:")
-    one.append(result['grade'])
+    one.append(round(float(result['grade']),2))
     evaluation.append(one)
   cursor.close()
-  context=dict(data=evaluation)
+  context=dict(data=evaluation,data2=msg)
   return render_template("seeeva.html", **context)
 
 @app.route('/addtocart', methods=['POST'])
 def addtocart():
   pid=request.form['pid']
-  g.conn.execute("INSERT INTO shopcart (pid,bid) VALUES ('%s','%s');" %(pid, session['bid']))
+  g.conn.execute("INSERT INTO shopcart (pid,bid) VALUES (%s,%s);", (pid, session['bid']))
   return redirect('/seeproduct')
  
 @app.route('/gotocart')
 def gotocart():
-  print session['bid']
+  msg = 'Welcome back, %s.' % session['user']
   cursor = g.conn.execute("SELECT p.pid, p.pname, p.price, p.condition FROM product_sells p,shopcart s WHERE s.pid=p.pid AND s.bid='%s';" %session['bid'])
   product=[]
   for result in cursor:
@@ -378,11 +383,12 @@ def gotocart():
     one.append(str(result['condition']))
     product.append(one)
   cursor.close()
-  context = dict(data=product)
+  context = dict(data=product,data2=msg)
   return render_template("cart.html", **context)  # cursor.close()
 
 @app.route('/gotopay')
 def gotopay():
+  msg = 'Welcome back, %s.' % session['user']
   cursor=g.conn.execute("SELECT s.bid,count(*) AS amount, sum(p.price) AS total_price FROM shopcart s, product_sells p WHERE s.pid=p.pid GROUP BY s.bid")
   order=[]
   for result in cursor:
@@ -427,7 +433,7 @@ def gotopay():
     one.append(str(result['condition']))
     product.append(one)
   cursor.close()
-  context = dict(data=product,data2=oid[-1],data3=amount[-1],data4=total_price[-1])
+  context = dict(data=product,data2=oid[-1],data3=amount[-1],data4=total_price[-1],data5=msg)
 
   g.conn.execute("DELETE FROM shopcart;")
   return render_template("paysuccess.html", **context)
@@ -436,6 +442,8 @@ def gotopay():
 def myproducts():
   if 'bid' not in session:
     return render_template("notbuyer.html")
+  msg = 'Welcome back, %s.' % session['user']
+
   cursor = g.conn.execute("SELECT p.pid, p.pname FROM order_create o, product_sells p where o.pid=p.pid AND o.bid='%s';" %session['bid'])
   product = []
   for result in cursor:
@@ -453,12 +461,12 @@ def myproducts():
     one.append("product id:")
     one.append(result['pid'])
     one.append("evaluate time:")
-    one.append(result['time'])
+    one.append(str(result['time']))
     one.append("grade")
     one.append(result['accuracy'])
     fb.append(one)
   cursor.close()
-  context = dict(data=product,data1=fb)
+  context = dict(data=product,data1=fb,data2=msg)
   return render_template("myproducts.html", **context)
 
 @app.route('/feedback', methods=['POST'])
@@ -488,7 +496,7 @@ def feedback():
   if j==0:
     return render_template("notyourproduct.html")
   accuracy=request.form['accuracy']
-  g.conn.execute("INSERT INTO feedback_given (pid,bid,accuracy,time) VALUES ('%s','%s', '%s',localtimestamp);" %(pid, session['bid'], accuracy))
+  g.conn.execute("INSERT INTO feedback_given (pid,bid,accuracy,time) VALUES (%s,%s, %s,localtimestamp);", (pid, session['bid'], accuracy))
   return redirect('/')
 
 # Example of adding new data to the database
