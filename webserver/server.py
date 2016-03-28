@@ -389,6 +389,18 @@ def gotocart():
 @app.route('/gotopay')
 def gotopay():
   msg = 'Welcome back, %s.' % session['user']
+  row=g.conn.execute("SELECT * from shopcart;").rowcount
+  print row
+  print type(row)
+  i=0
+  if row==0:
+    i=1
+  # for result in cursor:
+  #   print type(result['count'])
+  #   if int(result['count'])==0:
+  #     return redirect('/seeproduct')
+  if i==1:
+    return redirect('/seeproduct')
   cursor=g.conn.execute("SELECT s.bid,count(*) AS amount, sum(p.price) AS total_price FROM shopcart s, product_sells p WHERE s.pid=p.pid GROUP BY s.bid")
   order=[]
   for result in cursor:
