@@ -225,9 +225,9 @@ def add():
   else:
     return redirect('/newuser')
 
-@app.route('/another')
-def another():
-  return render_template("anotherfile.html")
+# @app.route('/another')
+# def another():
+#   return render_template("anotherfile.html")
 
 @app.route('/returnuser')
 def returnuser():
@@ -397,6 +397,20 @@ def myproducts():
 @app.route('/feedback', methods=['POST'])
 def feedback():
   pid=request.form['pid']
+  # cursor = g.conn.execute("SELECT pid FROM feedback_given;")
+  # i=0
+  # for result in cursor:
+  #   intpid=int(result['pid'])
+  #   print intpid
+  #   print pid
+  #   print pid==intpid
+  #   if pid==intpid:
+  #     i=1
+  #     print i
+  #     break
+  # cursor.close()
+  # if i==1:
+  #   return redirect('/myproducts')
   accuracy=request.form['accuracy']
   g.conn.execute("INSERT INTO feedback_given (pid,bid,accuracy) VALUES ('%s','%s', '%s');" %(pid, session['bid'], accuracy))
   return redirect('/')
